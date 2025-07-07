@@ -625,7 +625,9 @@
             actualizarEstadisticas();
             
             // Configurar fecha actual por defecto
-            document.getElementById('fecha').valueAsDate = new Date();
+            const hoy = new Date();
+            const fechaLocal = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+            document.getElementById('fecha').value = fechaLocal;
             
             // Event listeners
             document.getElementById('expedienteForm').addEventListener('submit', guardarExpediente);
