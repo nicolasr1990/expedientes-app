@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Expedientes Municipales</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sistema de Expedientes Municipales</title>
+<style>
         * {
             margin: 0;
             padding: 0;
@@ -427,183 +428,173 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>📋 Sistema de Expedientes</h1>
-            <p>Municipalidad - Gestión Digital de Expedientes</p>
-        </div>
-
-        <!-- Statistics -->
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" id="totalExpedientes">0</div>
-                <div class="stat-label">Total Expedientes</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="expedientesResueltos">0</div>
-                <div class="stat-label">Resueltos</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="expedientesTramite">0</div>
-                <div class="stat-label">En Trámite</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="expedientesPendientes">0</div>
-                <div class="stat-label">Pendientes</div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Form Panel -->
-            <div class="form-panel">
-                <h2 class="panel-title">➕ Nuevo Expediente</h2>
-                <form id="expedienteForm">
-                    <div class="form-group">
-                        <label for="numeroExpediente">N° Expediente</label>
-                        <input type="text" id="numeroExpediente" placeholder="Ej: 0001/25" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="fecha">Fecha</label>
-                        <input type="date" id="fecha" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="asunto">Asunto</label>
-                        <textarea id="asunto" placeholder="Descripción del asunto..." required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="solicitante">Solicitante</label>
-                        <input type="text" id="solicitante" placeholder="Nombre del solicitante" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="estado">Estado</label>
-                        <select id="estado" required>
-                            <option value="">Seleccionar estado</option>
-                            <option value="Resuelto">Resuelto</option>
-                            <option value="En trámite">En trámite</option>
-                            <option value="Pendiente">Pendiente</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="anotaciones">Anotaciones</label>
-                        <textarea id="anotaciones" placeholder="Observaciones adicionales..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">Guardar Expediente</button>
-                    <button type="button" class="btn btn-secondary btn-full" onclick="limpiarFormulario()">Limpiar</button>
-                </form>
-            </div>
-
-            <!-- Filters Panel -->
-            <div class="filters-panel">
-                <h2 class="panel-title">🔍 Filtros y Búsqueda</h2>
-                
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="busquedaGeneral" placeholder="Buscar por cualquier campo...">
-                </div>
-
-                <div class="filters-grid">
-                    <div class="form-group">
-                        <label for="filtroEstado">Estado</label>
-                        <select id="filtroEstado">
-                            <option value="">Todos</option>
-                            <option value="Resuelto">Resuelto</option>
-                            <option value="En trámite">En trámite</option>
-                            <option value="Pendiente">Pendiente</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="filtroFechaDesde">Desde</label>
-                        <input type="date" id="filtroFechaDesde">
-                    </div>
-                    <div class="form-group">
-                        <label for="filtroFechaHasta">Hasta</label>
-                        <input type="date" id="filtroFechaHasta">
-                    </div>
-                    <div class="form-group">
-                        <label for="filtroSolicitante">Solicitante</label>
-                        <input type="text" id="filtroSolicitante" placeholder="Nombre del solicitante">
-                    </div>
-                </div>
-
-                <div class="actions">
-                    <button class="btn btn-success" onclick="aplicarFiltros()">Aplicar Filtros</button>
-                    <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar Filtros</button>
-                    <button class="btn btn-primary" onclick="exportarDatos()">Exportar a Excel</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Table -->
-        <div class="table-container">
-            <h2 class="panel-title">📊 Lista de Expedientes</h2>
-            <div style="overflow-x: auto;">
-                <table class="table" id="tablaExpedientes">
-                    <thead>
-                        <tr>
-                            <th>N° Expediente</th>
-                            <th>Fecha</th>
-                            <th>Asunto</th>
-                            <th>Solicitante</th>
-                            <th>Estado</th>
-                            <th>Anotaciones</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaBody">
-                        <!-- Los datos se cargarán aquí -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para editar -->
-    <div id="modalEditar" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Editar Expediente</h3>
-                <span class="close" onclick="cerrarModal()">&times;</span>
-            </div>
-            <form id="formEditar">
-                <div class="form-group">
-                    <label for="editNumero">N° Expediente</label>
-                    <input type="text" id="editNumero" required>
-                </div>
-                <div class="form-group">
-                    <label for="editFecha">Fecha</label>
-                    <input type="date" id="editFecha" required>
-                </div>
-                <div class="form-group">
-                    <label for="editAsunto">Asunto</label>
-                    <textarea id="editAsunto" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="editSolicitante">Solicitante</label>
-                    <input type="text" id="editSolicitante" required>
-                </div>
-                <div class="form-group">
-                    <label for="editEstado">Estado</label>
-                    <select id="editEstado" required>
-                        <option value="Resuelto">Resuelto</option>
-                        <option value="En trámite">En trámite</option>
-                        <option value="Pendiente">Pendiente</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="editAnotaciones">Anotaciones</label>
-                    <textarea id="editAnotaciones"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary btn-full">Actualizar</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Notification -->
-    <div id="notification" class="notification"></div>
-
-    <script>
+<div class="container">
+<!-- Header -->
+<div class="header">
+<h1>📋 Sistema de Expedientes</h1>
+<p>Municipalidad - Gestión Digital de Expedientes</p>
+</div>
+<!-- Statistics -->
+<div class="stats">
+<div class="stat-card">
+<div class="stat-number" id="totalExpedientes">0</div>
+<div class="stat-label">Total Expedientes</div>
+</div>
+<div class="stat-card">
+<div class="stat-number" id="expedientesResueltos">0</div>
+<div class="stat-label">Resueltos</div>
+</div>
+<div class="stat-card">
+<div class="stat-number" id="expedientesTramite">0</div>
+<div class="stat-label">En Trámite</div>
+</div>
+<div class="stat-card">
+<div class="stat-number" id="expedientesPendientes">0</div>
+<div class="stat-label">Pendientes</div>
+</div>
+</div>
+<!-- Main Content -->
+<div class="main-content">
+<!-- Form Panel -->
+<div class="form-panel">
+<h2 class="panel-title">➕ Nuevo Expediente</h2>
+<form id="expedienteForm">
+<div class="form-group">
+<label for="numeroExpediente">N° Expediente</label>
+<input id="numeroExpediente" placeholder="Ej: 0001/25" required="" type="text"/>
+</div>
+<div class="form-group">
+<label for="fecha">Fecha</label>
+<input id="fecha" required="" type="date"/>
+</div>
+<div class="form-group">
+<label for="asunto">Asunto</label>
+<textarea id="asunto" placeholder="Descripción del asunto..." required=""></textarea>
+</div>
+<div class="form-group">
+<label for="solicitante">Solicitante</label>
+<input id="solicitante" placeholder="Nombre del solicitante" required="" type="text"/>
+</div>
+<div class="form-group">
+<label for="estado">Estado</label>
+<select id="estado" required="">
+<option value="">Seleccionar estado</option>
+<option value="Resuelto">Resuelto</option>
+<option value="En trámite">En trámite</option>
+<option value="Pendiente">Pendiente</option>
+</select>
+</div>
+<div class="form-group">
+<label for="anotaciones">Anotaciones</label>
+<textarea id="anotaciones" placeholder="Observaciones adicionales..."></textarea>
+</div>
+<button class="btn btn-primary btn-full" type="submit">Guardar Expediente</button>
+<button class="btn btn-secondary btn-full" onclick="limpiarFormulario()" type="button">Limpiar</button>
+</form>
+</div>
+<!-- Filters Panel -->
+<div class="filters-panel">
+<h2 class="panel-title">🔍 Filtros y Búsqueda</h2>
+<div class="search-box">
+<span class="search-icon">🔍</span>
+<input id="busquedaGeneral" placeholder="Buscar por cualquier campo..." type="text"/>
+</div>
+<div class="filters-grid">
+<div class="form-group">
+<label for="filtroEstado">Estado</label>
+<select id="filtroEstado">
+<option value="">Todos</option>
+<option value="Resuelto">Resuelto</option>
+<option value="En trámite">En trámite</option>
+<option value="Pendiente">Pendiente</option>
+</select>
+</div>
+<div class="form-group">
+<label for="filtroFechaDesde">Desde</label>
+<input id="filtroFechaDesde" type="date"/>
+</div>
+<div class="form-group">
+<label for="filtroFechaHasta">Hasta</label>
+<input id="filtroFechaHasta" type="date"/>
+</div>
+<div class="form-group">
+<label for="filtroSolicitante">Solicitante</label>
+<input id="filtroSolicitante" placeholder="Nombre del solicitante" type="text"/>
+</div>
+</div>
+<div class="actions">
+<button class="btn btn-success" onclick="aplicarFiltros()">Aplicar Filtros</button>
+<button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar Filtros</button>
+<button class="btn btn-primary" onclick="exportarDatos()">Exportar a Excel</button>
+</div>
+</div>
+</div>
+<!-- Table -->
+<div class="table-container">
+<h2 class="panel-title">📊 Lista de Expedientes</h2>
+<div style="overflow-x: auto;">
+<table class="table" id="tablaExpedientes">
+<thead>
+<tr>
+<th>N° Expediente</th>
+<th>Fecha</th>
+<th>Asunto</th>
+<th>Solicitante</th>
+<th>Estado</th>
+<th>Anotaciones</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody id="tablaBody">
+<!-- Los datos se cargarán aquí -->
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Modal para editar -->
+<div class="modal" id="modalEditar">
+<div class="modal-content">
+<div class="modal-header">
+<h3 class="modal-title">Editar Expediente</h3>
+<span class="close" onclick="cerrarModal()">×</span>
+</div>
+<form id="formEditar">
+<div class="form-group">
+<label for="editNumero">N° Expediente</label>
+<input id="editNumero" required="" type="text"/>
+</div>
+<div class="form-group">
+<label for="editFecha">Fecha</label>
+<input id="editFecha" required="" type="date"/>
+</div>
+<div class="form-group">
+<label for="editAsunto">Asunto</label>
+<textarea id="editAsunto" required=""></textarea>
+</div>
+<div class="form-group">
+<label for="editSolicitante">Solicitante</label>
+<input id="editSolicitante" required="" type="text"/>
+</div>
+<div class="form-group">
+<label for="editEstado">Estado</label>
+<select id="editEstado" required="">
+<option value="Resuelto">Resuelto</option>
+<option value="En trámite">En trámite</option>
+<option value="Pendiente">Pendiente</option>
+</select>
+</div>
+<div class="form-group">
+<label for="editAnotaciones">Anotaciones</label>
+<textarea id="editAnotaciones"></textarea>
+</div>
+<button class="btn btn-primary btn-full" type="submit">Actualizar</button>
+</form>
+</div>
+</div>
+<!-- Notification -->
+<div class="notification" id="notification"></div>
+<script>
         // Datos de ejemplo y almacenamiento local
         let expedientes = JSON.parse(localStorage.getItem('expedientes')) || [
             {
@@ -667,19 +658,15 @@
             actualizarEstadisticas();
             limpiarFormulario();
             mostrarNotificacion('Expediente guardado exitosamente', 'success');
-    fetch("https://script.google.com/macros/s/AKfycbxZCn2NegD0niAs0BcGigPuvqVIRTOkRQhoEbDbOsjjZ9YKPTBVFnce2ZFq8FXeNh4g/exec", {
-        method: "POST",
-        body: JSON.stringify(expediente),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    .then(res => res.text())
-    .then(res => console.log("Respuesta de Google Sheets:", res))
-    .catch(err => {
-        console.error("Error al guardar en Google Sheets:", err);
-        mostrarNotificacion('Error al guardar en Sheets', 'error');
-    });
+    // También enviamos a Google Sheets por formulario oculto
+    document.getElementById('gs_numero').value = expediente.numero;
+    document.getElementById('gs_fecha').value = expediente.fecha;
+    document.getElementById('gs_asunto').value = expediente.asunto;
+    document.getElementById('gs_solicitante').value = expediente.solicitante;
+    document.getElementById('gs_estado').value = expediente.estado;
+    document.getElementById('gs_anotaciones').value = expediente.anotaciones;
+    document.getElementById('formGoogleSheets').submit();
+
         }
 
         function cargarExpedientes() {
@@ -1106,5 +1093,5 @@
         console.log('- Diseño responsivo');
         console.log('- Almacenamiento local');
     </script>
-</body>
+<iframe id="iframeOculto" name="iframeOculto" style="display:none;"></iframe><form action="https://script.google.com/macros/s/AKfycbxZCn2NegD0niAs0BcGigPuvqVIRTOkRQhoEbDbOsjjZ9YKPTBVFnce2ZFq8FXeNh4g/exec" id="formGoogleSheets" method="POST" style="display:none;" target="iframeOculto"><input id="gs_numero" name="numero" type="hidden"/><input id="gs_fecha" name="fecha" type="hidden"/><input id="gs_asunto" name="asunto" type="hidden"/><input id="gs_solicitante" name="solicitante" type="hidden"/><input id="gs_estado" name="estado" type="hidden"/><input id="gs_anotaciones" name="anotaciones" type="hidden"/></form></body>
 </html>
