@@ -626,7 +626,10 @@
             
             // Configurar fecha actual por defecto
             const hoy = new Date();
-            const fechaLocal = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+            const anio = hoy.getFullYear();
+            const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+            const dia = String(hoy.getDate()).padStart(2, '0');
+            const fechaLocal = `${anio}-${mes}-${dia}`;
             document.getElementById('fecha').value = fechaLocal;
             
             // Event listeners
