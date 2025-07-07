@@ -1,1100 +1,582 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Sistema de Expedientes Municipales</title>
-<style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .header h1 {
-            color: #2c3e50;
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header p {
-            text-align: center;
-            color: #7f8c8d;
-            font-size: 1.1em;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .form-panel, .filters-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .panel-title {
-            font-size: 1.5em;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #34495e;
-            font-weight: 600;
-        }
-
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e3f2fd;
-            border-radius: 12px;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            background: #fafafa;
-        }
-
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
-            color: white;
-            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(45deg, #4ecdc4, #44a08d);
-            color: white;
-            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
-        }
-
-        .btn-full {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .table-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow-x: auto;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .table th, .table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .table th {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: sticky;
-            top: 0;
-        }
-
-        .table tr:hover {
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-resuelto {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-tramite {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-pendiente {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            color: #7f8c8d;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            z-index: 1000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            background: #28a745;
-        }
-
-        .notification.error {
-            background: #dc3545;
-        }
-
-        .search-box {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .search-box input {
-            padding-left: 45px;
-            background: white;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #667eea;
-        }
-
-        .actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .actions button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-        }
-
-        .btn-edit {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .btn-delete {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-edit:hover, .btn-delete:hover {
-            transform: scale(1.05);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .modal-title {
-            font-size: 1.5em;
-            color: #2c3e50;
-        }
-
-        .close {
-            font-size: 28px;
-            cursor: pointer;
-            color: #aaa;
-            transition: color 0.3s ease;
-        }
-
-        .close:hover {
-            color: #333;
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .filters-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .table-container {
-                padding: 15px;
-            }
-            
-            .table th, .table td {
-                padding: 10px 8px;
-                font-size: 0.9em;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .stats {
-                grid-template-columns: 1fr;
-            }
-            
-            .actions {
-                flex-direction: column;
-            }
-            
-            .actions button {
-                width: 100%;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sistema de Expedientes Municipales</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    .header h1 {
+      color: #2c3e50;
+      text-align: center;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header p {
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 1.1em;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .stat-card:hover { transform: translateY(-5px); }
+    .stat-number {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+    .stat-label {
+      color: #7f8c8d;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-panel, .filters-panel {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    .panel-title {
+      font-size: 1.5em;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #34495e;
+      font-weight: 600;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e3f2fd;
+      border-radius: 12px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+      background: #fafafa;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    .btn-secondary {
+      background: linear-gradient(45deg, #f093fb, #f5576c);
+      color: white;
+      box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+    }
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+    }
+    .btn-success {
+      background: linear-gradient(45deg, #4ecdc4, #44a08d);
+      color: white;
+      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+    }
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+    }
+    .btn-full {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .table-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .table th, .table td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .table th {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+    }
+    .table tr:hover {
+      background: rgba(102, 126, 234, 0.05);
+    }
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status-resuelto {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-tramite {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-pendiente {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+    }
+    .notification.show {
+      transform: translateX(0);
+    }
+    .notification.success {
+      background: #28a745;
+    }
+    .notification.error {
+      background: #dc3545;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+    .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e9ecef;
+    }
+    .modal-title {
+      font-size: 1.5em;
+      color: #2c3e50;
+    }
+    .close {
+      font-size: 28px;
+      cursor: pointer;
+      color: #aaa;
+      transition: color 0.3s ease;
+    }
+    .close:hover {
+      color: #333;
+    }
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .header h1 {
+        font-size: 2em;
+      }
+      .table-container {
+        padding: 15px;
+      }
+      .table th, .table td {
+        padding: 10px 8px;
+        font-size: 0.9em;
+      }
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+      .stats {
+        grid-template-columns: 1fr;
+      }
+      .actions {
+        flex-direction: column;
+      }
+      .actions button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-<!-- Header -->
-<div class="header">
-<h1>📋 Sistema de Expedientes</h1>
-<p>Municipalidad - Gestión Digital de Expedientes</p>
-</div>
-<!-- Statistics -->
-<div class="stats">
-<div class="stat-card">
-<div class="stat-number" id="totalExpedientes">0</div>
-<div class="stat-label">Total Expedientes</div>
-</div>
-<div class="stat-card">
-<div class="stat-number" id="expedientesResueltos">0</div>
-<div class="stat-label">Resueltos</div>
-</div>
-<div class="stat-card">
-<div class="stat-number" id="expedientesTramite">0</div>
-<div class="stat-label">En Trámite</div>
-</div>
-<div class="stat-card">
-<div class="stat-number" id="expedientesPendientes">0</div>
-<div class="stat-label">Pendientes</div>
-</div>
-</div>
-<!-- Main Content -->
-<div class="main-content">
-<!-- Form Panel -->
-<div class="form-panel">
-<h2 class="panel-title">➕ Nuevo Expediente</h2>
-<form id="expedienteForm">
-<div class="form-group">
-<label for="numeroExpediente">N° Expediente</label>
-<input id="numeroExpediente" placeholder="Ej: 0001/25" required="" type="text"/>
-</div>
-<div class="form-group">
-<label for="fecha">Fecha</label>
-<input id="fecha" required="" type="date"/>
-</div>
-<div class="form-group">
-<label for="asunto">Asunto</label>
-<textarea id="asunto" placeholder="Descripción del asunto..." required=""></textarea>
-</div>
-<div class="form-group">
-<label for="solicitante">Solicitante</label>
-<input id="solicitante" placeholder="Nombre del solicitante" required="" type="text"/>
-</div>
-<div class="form-group">
-<label for="estado">Estado</label>
-<select id="estado" required="">
-<option value="">Seleccionar estado</option>
-<option value="Resuelto">Resuelto</option>
-<option value="En trámite">En trámite</option>
-<option value="Pendiente">Pendiente</option>
-</select>
-</div>
-<div class="form-group">
-<label for="anotaciones">Anotaciones</label>
-<textarea id="anotaciones" placeholder="Observaciones adicionales..."></textarea>
-</div>
-<button class="btn btn-primary btn-full" type="submit">Guardar Expediente</button>
-<button class="btn btn-secondary btn-full" onclick="limpiarFormulario()" type="button">Limpiar</button>
-</form>
-</div>
-<!-- Filters Panel -->
-<div class="filters-panel">
-<h2 class="panel-title">🔍 Filtros y Búsqueda</h2>
-<div class="search-box">
-<span class="search-icon">🔍</span>
-<input id="busquedaGeneral" placeholder="Buscar por cualquier campo..." type="text"/>
-</div>
-<div class="filters-grid">
-<div class="form-group">
-<label for="filtroEstado">Estado</label>
-<select id="filtroEstado">
-<option value="">Todos</option>
-<option value="Resuelto">Resuelto</option>
-<option value="En trámite">En trámite</option>
-<option value="Pendiente">Pendiente</option>
-</select>
-</div>
-<div class="form-group">
-<label for="filtroFechaDesde">Desde</label>
-<input id="filtroFechaDesde" type="date"/>
-</div>
-<div class="form-group">
-<label for="filtroFechaHasta">Hasta</label>
-<input id="filtroFechaHasta" type="date"/>
-</div>
-<div class="form-group">
-<label for="filtroSolicitante">Solicitante</label>
-<input id="filtroSolicitante" placeholder="Nombre del solicitante" type="text"/>
-</div>
-</div>
-<div class="actions">
-<button class="btn btn-success" onclick="aplicarFiltros()">Aplicar Filtros</button>
-<button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar Filtros</button>
-<button class="btn btn-primary" onclick="exportarDatos()">Exportar a Excel</button>
-</div>
-</div>
-</div>
-<!-- Table -->
-<div class="table-container">
-<h2 class="panel-title">📊 Lista de Expedientes</h2>
-<div style="overflow-x: auto;">
-<table class="table" id="tablaExpedientes">
-<thead>
-<tr>
-<th>N° Expediente</th>
-<th>Fecha</th>
-<th>Asunto</th>
-<th>Solicitante</th>
-<th>Estado</th>
-<th>Anotaciones</th>
-<th>Acciones</th>
-</tr>
-</thead>
-<tbody id="tablaBody">
-<!-- Los datos se cargarán aquí -->
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<!-- Modal para editar -->
-<div class="modal" id="modalEditar">
-<div class="modal-content">
-<div class="modal-header">
-<h3 class="modal-title">Editar Expediente</h3>
-<span class="close" onclick="cerrarModal()">×</span>
-</div>
-<form id="formEditar">
-<div class="form-group">
-<label for="editNumero">N° Expediente</label>
-<input id="editNumero" required="" type="text"/>
-</div>
-<div class="form-group">
-<label for="editFecha">Fecha</label>
-<input id="editFecha" required="" type="date"/>
-</div>
-<div class="form-group">
-<label for="editAsunto">Asunto</label>
-<textarea id="editAsunto" required=""></textarea>
-</div>
-<div class="form-group">
-<label for="editSolicitante">Solicitante</label>
-<input id="editSolicitante" required="" type="text"/>
-</div>
-<div class="form-group">
-<label for="editEstado">Estado</label>
-<select id="editEstado" required="">
-<option value="Resuelto">Resuelto</option>
-<option value="En trámite">En trámite</option>
-<option value="Pendiente">Pendiente</option>
-</select>
-</div>
-<div class="form-group">
-<label for="editAnotaciones">Anotaciones</label>
-<textarea id="editAnotaciones"></textarea>
-</div>
-<button class="btn btn-primary btn-full" type="submit">Actualizar</button>
-</form>
-</div>
-</div>
-<!-- Notification -->
-<div class="notification" id="notification"></div>
-<script>
-        // Datos de ejemplo y almacenamiento local
-        let expedientes = JSON.parse(localStorage.getItem('expedientes')) || [
-            {
-                id: 1,
-                numero: "0001/25",
-                fecha: "2025-01-03",
-                asunto: "Solicita autorización para la realización de un evento bailable en el polideportivo municipal el día 25 de enero",
-                solicitante: "José Eduardo Alcaraz",
-                estado: "Resuelto",
-                anotaciones: "Por Resolución N° 06/2025"
-            },
-            {
-                id: 2,
-                numero: "0002/25",
-                fecha: "2025-01-03",
-                asunto: "Solicita autorización para la realización de una peña folclórica de conmemoración al Gauchito Antonio Gil el día 07 de enero en su domicilio particular en el Paraje Talati",
-                solicitante: "Vicente Nelson López",
-                estado: "Resuelto",
-                anotaciones: "Por Resolución N° 03/2025"
-            }
-        ];
+  <div class="container">
+    <!-- Encabezado -->
+    <div class="header">
+      <h1>📋 Sistema de Expedientes</h1>
+      <p>Municipalidad - Gestión Digital de Expedientes</p>
+    </div>
 
-        let expedienteEditando = null;
+    <!-- Estadísticas -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-number" id="totalExpedientes">0</div>
+        <div class="stat-label">Total Expedientes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="expedientesResueltos">0</div>
+        <div class="stat-label">Resueltos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="expedientesTramite">0</div>
+        <div class="stat-label">En Trámite</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="expedientesPendientes">0</div>
+        <div class="stat-label">Pendientes</div>
+      </div>
+    </div>
 
-        // Inicializar la aplicación
-        document.addEventListener('DOMContentLoaded', function() {
-            cargarExpedientes();
-            actualizarEstadisticas();
-            
-            // Configurar fecha actual por defecto
-            const hoy = new Date();
-            document.getElementById('fecha').valueAsDate = hoy;
-            
-            // Event listeners
-            document.getElementById('expedienteForm').addEventListener('submit', guardarExpediente);
-            document.getElementById('formEditar').addEventListener('submit', actualizarExpediente);
-            document.getElementById('busquedaGeneral').addEventListener('input', buscarExpedientes);
-            
-            // Filtros en tiempo real
-            document.getElementById('filtroEstado').addEventListener('change', aplicarFiltros);
-            document.getElementById('filtroFechaDesde').addEventListener('change', aplicarFiltros);
-            document.getElementById('filtroFechaHasta').addEventListener('change', aplicarFiltros);
-            document.getElementById('filtroSolicitante').addEventListener('input', aplicarFiltros);
-        });
+    <!-- Contenido principal -->
+    <div class="main-content" style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+      <!-- Formulario -->
+      <div class="form-panel">
+        <h2 class="panel-title">➕ Nuevo Expediente</h2>
+        <form id="expedienteForm">
+          <div class="form-group">
+            <label for="numeroExpediente">N° Expediente</label>
+            <input id="numeroExpediente" placeholder="Ej: 0001/25" required type="text"/>
+          </div>
+          <div class="form-group">
+            <label for="fecha">Fecha</label>
+            <input id="fecha" required type="date"/>
+          </div>
+          <div class="form-group">
+            <label for="asunto">Asunto</label>
+            <textarea id="asunto" placeholder="Descripción del asunto..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="solicitante">Solicitante</label>
+            <input id="solicitante" placeholder="Nombre del solicitante" required type="text"/>
+          </div>
+          <div class="form-group">
+            <label for="estado">Estado</label>
+            <select id="estado" required>
+              <option value="">Seleccionar estado</option>
+              <option value="Resuelto">Resuelto</option>
+              <option value="En trámite">En trámite</option>
+              <option value="Pendiente">Pendiente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="anotaciones">Anotaciones</label>
+            <textarea id="anotaciones" placeholder="Observaciones adicionales..."></textarea>
+          </div>
+          <button class="btn btn-primary btn-full" type="submit">Guardar Expediente</button>
+          <button class="btn btn-secondary btn-full" onclick="limpiarFormulario()" type="button">Limpiar</button>
+        </form>
+      </div>
 
-        function guardarExpediente(e) {
-            e.preventDefault();
-            
-            const expediente = {
-                id: Date.now(),
-                numero: document.getElementById('numeroExpediente').value,
-                fecha: document.getElementById('fecha').value,
-                asunto: document.getElementById('asunto').value,
-                solicitante: document.getElementById('solicitante').value,
-                estado: document.getElementById('estado').value,
-                anotaciones: document.getElementById('anotaciones').value
-            };
-            
-            expedientes.push(expediente);
-            guardarEnLocalStorage();
-            cargarExpedientes();
-            actualizarEstadisticas();
-            limpiarFormulario();
-            mostrarNotificacion('Expediente guardado exitosamente', 'success');
-    // También enviamos a Google Sheets por formulario oculto
-    document.getElementById('gs_numero').value = expediente.numero;
-    document.getElementById('gs_fecha').value = expediente.fecha;
-    document.getElementById('gs_asunto').value = expediente.asunto;
-    document.getElementById('gs_solicitante').value = expediente.solicitante;
-    document.getElementById('gs_estado').value = expediente.estado;
-    document.getElementById('gs_anotaciones').value = expediente.anotaciones;
-    document.getElementById('formGoogleSheets').submit();
+      <!-- Filtros -->
+      <div class="filters-panel">
+        <h2 class="panel-title">🔍 Filtros y Búsqueda</h2>
+        <div class="form-group">
+          <input id="busquedaGeneral" type="text" placeholder="Buscar por cualquier campo..."/>
+        </div>
+        <div class="filters-grid">
+          <div class="form-group">
+            <label for="filtroEstado">Estado</label>
+            <select id="filtroEstado">
+              <option value="">Todos</option>
+              <option value="Resuelto">Resuelto</option>
+              <option value="En trámite">En trámite</option>
+              <option value="Pendiente">Pendiente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="filtroFechaDesde">Desde</label>
+            <input id="filtroFechaDesde" type="date"/>
+          </div>
+          <div class="form-group">
+            <label for="filtroFechaHasta">Hasta</label>
+            <input id="filtroFechaHasta" type="date"/>
+          </div>
+          <div class="form-group">
+            <label for="filtroSolicitante">Solicitante</label>
+            <input id="filtroSolicitante" placeholder="Nombre del solicitante" type="text"/>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-success" onclick="aplicarFiltros()">Aplicar Filtros</button>
+          <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar Filtros</button>
+        </div>
+      </div>
+    </div>
 
-        }
+    <!-- Tabla de Expedientes -->
+    <div class="table-container">
+      <h2 class="panel-title">📊 Lista de Expedientes</h2>
+      <table class="table" id="tablaExpedientes">
+        <thead>
+          <tr>
+            <th>N° Expediente</th>
+            <th>Fecha</th>
+            <th>Asunto</th>
+            <th>Solicitante</th>
+            <th>Estado</th>
+            <th>Anotaciones</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaBody">
+          <!-- Las filas se insertan dinámicamente -->
+        </tbody>
+      </table>
+    </div>
 
-        function cargarExpedientes() {
-            const tbody = document.getElementById('tablaBody');
-            tbody.innerHTML = '';
-            
-            expedientes.forEach(exp => {
-                const row = crearFilaExpediente(exp);
-                tbody.appendChild(row);
-            });
-        }
+    <!-- Modal para editar -->
+    <div class="modal" id="modalEditar">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Editar Expediente</h3>
+          <span class="close" onclick="cerrarModal()">×</span>
+        </div>
+        <form id="formEditar">
+          <div class="form-group">
+            <label for="editNumero">N° Expediente</label>
+            <input id="editNumero" required type="text"/>
+          </div>
+          <div class="form-group">
+            <label for="editFecha">Fecha</label>
+            <input id="editFecha" required type="date"/>
+          </div>
+          <div class="form-group">
+            <label for="editAsunto">Asunto</label>
+            <textarea id="editAsunto" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="editSolicitante">Solicitante</label>
+            <input id="editSolicitante" required type="text"/>
+          </div>
+          <div class="form-group">
+            <label for="editEstado">Estado</label>
+            <select id="editEstado" required>
+              <option value="Resuelto">Resuelto</option>
+              <option value="En trámite">En trámite</option>
+              <option value="Pendiente">Pendiente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editAnotaciones">Anotaciones</label>
+            <textarea id="editAnotaciones"></textarea>
+          </div>
+          <button class="btn btn-primary btn-full" type="submit">Actualizar</button>
+        </form>
+      </div>
+    </div>
+  </div> <!-- Cierra .container -->
 
-        function crearFilaExpediente(exp) {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><strong>${exp.numero}</strong></td>
-                <td>${formatearFecha(exp.fecha)}</td>
-                <td>${exp.asunto.substring(0, 100)}${exp.asunto.length > 100 ? '...' : ''}</td>
-                <td>${exp.solicitante}</td>
-                <td><span class="status-badge status-${exp.estado.toLowerCase().replace(' ', '-')}">${exp.estado}</span></td>
-                <td>${exp.anotaciones || '-'}</td>
-                <td>
-                    <div class="actions">
-                        <button class="btn-edit" onclick="editarExpediente(${exp.id})">✏️ Editar</button>
-                        <button class="btn-delete" onclick="eliminarExpediente(${exp.id})">🗑️ Eliminar</button>
-                    </div>
-                </td>
-            `;
-            return row;
-        }
+  <!-- Notificación flotante -->
+  <div class="notification" id="notification"></div>
 
-        function editarExpediente(id) {
-            const expediente = expedientes.find(exp => exp.id === id);
-            if (!expediente) return;
-            
-            expedienteEditando = id;
-            document.getElementById('editNumero').value = expediente.numero;
-            document.getElementById('editFecha').value = expediente.fecha;
-            document.getElementById('editAsunto').value = expediente.asunto;
-            document.getElementById('editSolicitante').value = expediente.solicitante;
-            document.getElementById('editEstado').value = expediente.estado;
-            document.getElementById('editAnotaciones').value = expediente.anotaciones || '';
-            
-            document.getElementById('modalEditar').style.display = 'block';
-        }
+  <!-- Scripts de funcionamiento -->
+  <script>
+    let expedientes = [];
+    let expedienteEditando = null;
 
-        function actualizarExpediente(e) {
-            e.preventDefault();
-            
-            const index = expedientes.findIndex(exp => exp.id === expedienteEditando);
-            if (index === -1) return;
-            
-            expedientes[index] = {
-                ...expedientes[index],
-                numero: document.getElementById('editNumero').value,
-                fecha: document.getElementById('editFecha').value,
-                asunto: document.getElementById('editAsunto').value,
-                solicitante: document.getElementById('editSolicitante').value,
-                estado: document.getElementById('editEstado').value,
-                anotaciones: document.getElementById('editAnotaciones').value
-            };
-            
-            guardarEnLocalStorage();
-            cargarExpedientes();
-            actualizarEstadisticas();
-            cerrarModal();
-            mostrarNotificacion('Expediente actualizado exitosamente', 'success');
-        }
+    const URL_GOOGLE_SHEETS = 'https://script.google.com/macros/s/AKfycbwbnH-vIXONa8ZV0dh6Un7zvQLs8-xrv_EBlzrpppgFGLu9DE_ClcBmquZ2lmeGBTF0/exec';
 
-        function eliminarExpediente(id) {
-            if (confirm('¿Estás seguro de que deseas eliminar este expediente?')) {
-                expedientes = expedientes.filter(exp => exp.id !== id);
-                guardarEnLocalStorage();
-                cargarExpedientes();
-                actualizarEstadisticas();
-                mostrarNotificacion('Expediente eliminado exitosamente', 'success');
-            }
-        }
+    async function obtenerDatosDesdeSheets() {
+      try {
+        const res = await fetch(URL_GOOGLE_SHEETS);
+        const data = await res.json();
+        expedientes = data.map((item, index) => ({
+          id: Date.now() + index,
+          numero: item.numero,
+          fecha: item.fecha,
+          asunto: item.asunto,
+          solicitante: item.solicitante,
+          estado: item.estado,
+          anotaciones: item.anotaciones || ''
+        }));
+        cargarExpedientes();
+        actualizarEstadisticas();
+        localStorage.setItem('expedientes', JSON.stringify(expedientes));
+      } catch (error) {
+        console.error('Error al obtener datos de Google Sheets:', error);
+        mostrarNotificacion('Error al conectar con Google Sheets', 'error');
+      }
+    }
 
-        function aplicarFiltros() {
-            const estado = document.getElementById('filtroEstado').value;
-            const fechaDesde = document.getElementById('filtroFechaDesde').value;
-            const fechaHasta = document.getElementById('filtroFechaHasta').value;
-            const solicitante = document.getElementById('filtroSolicitante').value.toLowerCase();
-            
-            const expedientesFiltrados = expedientes.filter(exp => {
-                let cumpleFiltros = true;
-                
-                if (estado && exp.estado !== estado) cumpleFiltros = false;
-                if (fechaDesde && exp.fecha < fechaDesde) cumpleFiltros = false;
-                if (fechaHasta && exp.fecha > fechaHasta) cumpleFiltros = false;
-                if (solicitante && !exp.solicitante.toLowerCase().includes(solicitante)) cumpleFiltros = false;
-                
-                return cumpleFiltros;
-            });
-            
-            mostrarExpedientesFiltrados(expedientesFiltrados);
-        }
+    document.addEventListener('DOMContentLoaded', function () {
+      obtenerDatosDesdeSheets();
+      document.getElementById('expedienteForm').addEventListener('submit', guardarExpediente);
+      document.getElementById('formEditar').addEventListener('submit', actualizarExpediente);
+      document.getElementById('busquedaGeneral').addEventListener('input', buscarExpedientes);
+      document.getElementById('filtroEstado').addEventListener('change', aplicarFiltros);
+      document.getElementById('filtroFechaDesde').addEventListener('change', aplicarFiltros);
+      document.getElementById('filtroFechaHasta').addEventListener('change', aplicarFiltros);
+      document.getElementById('filtroSolicitante').addEventListener('input', aplicarFiltros);
+    });
 
-        function buscarExpedientes() {
-            const busqueda = document.getElementById('busquedaGeneral').value.toLowerCase();
-            
-            if (!busqueda) {
-                cargarExpedientes();
-                return;
-            }
-            
-            const expedientesFiltrados = expedientes.filter(exp => {
-                return exp.numero.toLowerCase().includes(busqueda) ||
-                       exp.asunto.toLowerCase().includes(busqueda) ||
-                       exp.solicitante.toLowerCase().includes(busqueda) ||
-                       exp.estado.toLowerCase().includes(busqueda) ||
-                       (exp.anotaciones && exp.anotaciones.toLowerCase().includes(busqueda));
-            });
-            
-            mostrarExpedientesFiltrados(expedientesFiltrados);
-        }
+    setInterval(obtenerDatosDesdeSheets, 5 * 60 * 1000); // cada 5 minutos
 
-        function mostrarExpedientesFiltrados(expedientesFiltrados) {
-            const tbody = document.getElementById('tablaBody');
-            tbody.innerHTML = '';
-            
-            expedientesFiltrados.forEach(exp => {
-                const row = crearFilaExpediente(exp);
-                tbody.appendChild(row);
-            });
-        }
+    function guardarExpediente(e) {
+      e.preventDefault();
+      const expediente = {
+        id: Date.now(),
+        numero: document.getElementById('numeroExpediente').value,
+        fecha: document.getElementById('fecha').value,
+        asunto: document.getElementById('asunto').value,
+        solicitante: document.getElementById('solicitante').value,
+        estado: document.getElementById('estado').value,
+        anotaciones: document.getElementById('anotaciones').value
+      };
+      expedientes.push(expediente);
+      cargarExpedientes();
+      actualizarEstadisticas();
+      mostrarNotificacion('Expediente guardado exitosamente', 'success');
+      localStorage.setItem('expedientes', JSON.stringify(expedientes));
 
-        function limpiarFiltros() {
-            document.getElementById('filtroEstado').value = '';
-            document.getElementById('filtroFechaDesde').value = '';
-            document.getElementById('filtroFechaHasta').value = '';
-            document.getElementById('filtroSolicitante').value = '';
-            document.getElementById('busquedaGeneral').value = '';
-            cargarExpedientes();
-        }
+      document.getElementById('gs_numero').value = expediente.numero;
+      document.getElementById('gs_fecha').value = expediente.fecha;
+      document.getElementById('gs_asunto').value = expediente.asunto;
+      document.getElementById('gs_solicitante').value = expediente.solicitante;
+      document.getElementById('gs_estado').value = expediente.estado;
+      document.getElementById('gs_anotaciones').value = expediente.anotaciones;
+      document.getElementById('formGoogleSheets').submit();
+      limpiarFormulario();
+    }
 
-        function limpiarFormulario() {
-            document.getElementById('expedienteForm').reset();
-            document.getElementById('fecha').valueAsDate = new Date();
-        }
+    // Agregá acá tus funciones: cargarExpedientes, actualizarEstadisticas, buscarExpedientes, aplicarFiltros, editarExpediente, etc.
 
-        function actualizarEstadisticas() {
-            const total = expedientes.length;
-            const resueltos = expedientes.filter(exp => exp.estado === 'Resuelto').length;
-            const tramite = expedientes.filter(exp => exp.estado === 'En trámite').length;
-            const pendientes = expedientes.filter(exp => exp.estado === 'Pendiente').length;
-            
-            document.getElementById('totalExpedientes').textContent = total;
-            document.getElementById('expedientesResueltos').textContent = resueltos;
-            document.getElementById('expedientesTramite').textContent = tramite;
-            document.getElementById('expedientesPendientes').textContent = pendientes;
-        }
+    function mostrarNotificacion(mensaje, tipo) {
+      const notification = document.getElementById('notification');
+      notification.textContent = mensaje;
+      notification.className = `notification ${tipo}`;
+      notification.classList.add('show');
+      setTimeout(() => notification.classList.remove('show'), 3000);
+    }
 
-        function exportarDatos() {
-            const csvContent = "data:text/csv;charset=utf-8," + 
-                "Número,Fecha,Asunto,Solicitante,Estado,Anotaciones\n" +
-                expedientes.map(exp => 
-                    `"${exp.numero}","${exp.fecha}","${exp.asunto}","${exp.solicitante}","${exp.estado}","${exp.anotaciones || ''}"`
-                ).join("\n");
-            
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "expedientes_municipales.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            mostrarNotificacion('Datos exportados exitosamente', 'success');
-        }
+    function cerrarModal() {
+      document.getElementById('modalEditar').style.display = 'none';
+      expedienteEditando = null;
+    }
+  </script>
 
-        function cerrarModal() {
-            document.getElementById('modalEditar').style.display = 'none';
-            expedienteEditando = null;
-        }
-
-        function mostrarNotificacion(mensaje, tipo) {
-            const notification = document.getElementById('notification');
-            notification.textContent = mensaje;
-            notification.className = `notification ${tipo}`;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        function formatearFecha(fecha) {
-            // Dividir la fecha en partes para evitar problemas de zona horaria
-            const partes = fecha.split('-');
-            const año = partes[0];
-            const mes = partes[1];
-            const dia = partes[2];
-    
-            // Formatear directamente sin crear objeto Date
-            return `${dia}/${mes}/${año}`;
-        }
-        
-        function guardarEnLocalStorage() {
-            localStorage.setItem('expedientes', JSON.stringify(expedientes));
-        }
-
-        // Cerrar modal al hacer clic fuera
-        window.onclick = function(event) {
-            const modal = document.getElementById('modalEditar');
-            if (event.target === modal) {
-                cerrarModal();
-            }
-        }
-
-        // Generar número de expediente automático
-        function generarNumeroExpediente() {
-            const año = new Date().getFullYear().toString().substr(-2);
-            const ultimoNumero = expedientes.length > 0 ? 
-                Math.max(...expedientes.map(exp => {
-                    const match = exp.numero.match(/(\d+)\/\d+/);
-                    return match ? parseInt(match[1]) : 0;
-                })) : 0;
-            const nuevoNumero = (ultimoNumero + 1).toString().padStart(4, '0');
-            return `${nuevoNumero}/${año}`;
-        }
-
-        // Función para autocompletar número de expediente
-        function autocompletarNumero() {
-            const input = document.getElementById('numeroExpediente');
-            if (!input.value) {
-                input.value = generarNumeroExpediente();
-            }
-        }
-
-        // Agregar evento al campo de número de expediente
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('numeroExpediente').addEventListener('focus', autocompletarNumero);
-        });
-
-        // Función para conectar con Google Sheets (placeholder)
-        function conectarGoogleSheets() {
-            // IMPORTANTE: Para conectar con Google Sheets necesitarás:
-            // 1. Crear un proyecto en Google Cloud Console
-            // 2. Habilitar Google Sheets API
-            // 3. Obtener credenciales de autenticación
-            // 4. Usar la biblioteca de Google Sheets API
-            
-            mostrarNotificacion('Función de Google Sheets pendiente de configuración', 'error');
-            
-            // Ejemplo de código para Google Sheets API:
-            /*
-            gapi.load('client:auth2', function() {
-                gapi.client.init({
-                    apiKey: 'TU_API_KEY',
-                    clientId: 'TU_CLIENT_ID',
-                    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-                    scope: 'https://www.googleapis.com/auth/spreadsheets'
-                }).then(function() {
-                    // Autenticar usuario
-                    // Leer/escribir datos en Google Sheets
-                });
-            });
-            */
-        }
-
-        // Función para sincronizar con Google Sheets
-        function sincronizarConGoogleSheets() {
-            // Esta función se implementaría con la API de Google Sheets
-            mostrarNotificacion('Sincronización con Google Sheets pendiente de configuración', 'error');
-        }
-
-        // Función para backup automático
-        function backupAutomatico() {
-            const backup = {
-                fecha: new Date().toISOString(),
-                datos: expedientes
-            };
-            
-            localStorage.setItem('backup_expedientes', JSON.stringify(backup));
-            mostrarNotificacion('Backup automático realizado', 'success');
-        }
-
-        // Realizar backup cada 30 minutos
-        setInterval(backupAutomatico, 30 * 60 * 1000);
-
-        // Función para restaurar backup
-        function restaurarBackup() {
-            const backup = localStorage.getItem('backup_expedientes');
-            if (backup) {
-                const datos = JSON.parse(backup);
-                if (confirm(`¿Deseas restaurar el backup del ${new Date(datos.fecha).toLocaleString()}?`)) {
-                    expedientes = datos.datos;
-                    guardarEnLocalStorage();
-                    cargarExpedientes();
-                    actualizarEstadisticas();
-                    mostrarNotificacion('Backup restaurado exitosamente', 'success');
-                }
-            } else {
-                mostrarNotificacion('No hay backups disponibles', 'error');
-            }
-        }
-
-        // Función para validar formulario
-        function validarFormulario() {
-            const numero = document.getElementById('numeroExpediente').value;
-            const fecha = document.getElementById('fecha').value;
-            const asunto = document.getElementById('asunto').value;
-            const solicitante = document.getElementById('solicitante').value;
-            const estado = document.getElementById('estado').value;
-
-            if (!numero || !fecha || !asunto || !solicitante || !estado) {
-                mostrarNotificacion('Por favor, completa todos los campos obligatorios', 'error');
-                return false;
-            }
-
-            // Validar formato de número de expediente
-            const formatoNumero = /^\d{4}\/\d{2}$/;
-            if (!formatoNumero.test(numero)) {
-                mostrarNotificacion('El formato del número de expediente debe ser NNNN/AA', 'error');
-                return false;
-            }
-
-            // Validar que el número no esté duplicado
-            const existe = expedientes.some(exp => exp.numero === numero);
-            if (existe) {
-                mostrarNotificacion('El número de expediente ya existe', 'error');
-                return false;
-            }
-
-            return true;
-        }
-
-        // Función para importar datos desde CSV
-        function importarCSV() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.csv';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const csv = e.target.result;
-                        const lineas = csv.split('\n');
-                        const encabezados = lineas[0].split(',');
-                        
-                        for (let i = 1; i < lineas.length; i++) {
-                            if (lineas[i].trim()) {
-                                const datos = lineas[i].split(',');
-                                const expediente = {
-                                    id: Date.now() + i,
-                                    numero: datos[0]?.replace(/"/g, ''),
-                                    fecha: datos[1]?.replace(/"/g, ''),
-                                    asunto: datos[2]?.replace(/"/g, ''),
-                                    solicitante: datos[3]?.replace(/"/g, ''),
-                                    estado: datos[4]?.replace(/"/g, ''),
-                                    anotaciones: datos[5]?.replace(/"/g, '') || ''
-                                };
-                                expedientes.push(expediente);
-                            }
-                        }
-                        
-                        guardarEnLocalStorage();
-                        cargarExpedientes();
-                        actualizarEstadisticas();
-                        mostrarNotificacion('Datos importados exitosamente', 'success');
-                    };
-                    reader.readAsText(file);
-                }
-            };
-            input.click();
-        }
-
-        // Función para generar reporte
-        function generarReporte() {
-            const reporte = {
-                fecha: new Date().toLocaleDateString('es-ES'),
-                total: expedientes.length,
-                resueltos: expedientes.filter(exp => exp.estado === 'Resuelto').length,
-                tramite: expedientes.filter(exp => exp.estado === 'En trámite').length,
-                pendientes: expedientes.filter(exp => exp.estado === 'Pendiente').length,
-                expedientes: expedientes
-            };
-            
-            const reporteHTML = `
-                <h1>Reporte de Expedientes Municipales</h1>
-                <p><strong>Fecha:</strong> ${reporte.fecha}</p>
-                <p><strong>Total de Expedientes:</strong> ${reporte.total}</p>
-                <p><strong>Resueltos:</strong> ${reporte.resueltos}</p>
-                <p><strong>En Trámite:</strong> ${reporte.tramite}</p>
-                <p><strong>Pendientes:</strong> ${reporte.pendientes}</p>
-                <table border="1" style="border-collapse: collapse; width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>N° Expediente</th>
-                            <th>Fecha</th>
-                            <th>Asunto</th>
-                            <th>Solicitante</th>
-                            <th>Estado</th>
-                            <th>Anotaciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${reporte.expedientes.map(exp => `
-                            <tr>
-                                <td>${exp.numero}</td>
-                                <td>${formatearFecha(exp.fecha)}</td>
-                                <td>${exp.asunto}</td>
-                                <td>${exp.solicitante}</td>
-                                <td>${exp.estado}</td>
-                                <td>${exp.anotaciones || ''}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            
-            const ventanaReporte = window.open('', '_blank');
-            ventanaReporte.document.write(reporteHTML);
-            ventanaReporte.document.close();
-        }
-
-        console.log('Sistema de Expedientes Municipales cargado correctamente');
-        console.log('Funcionalidades disponibles:');
-        console.log('- Gestión completa de expedientes');
-        console.log('- Filtros y búsqueda avanzada');
-        console.log('- Estadísticas en tiempo real');
-        console.log('- Exportación a CSV');
-        console.log('- Backup automático');
-        console.log('- Diseño responsivo');
-        console.log('- Almacenamiento local');
-    </script>
-<iframe id="iframeOculto" name="iframeOculto" style="display:none;"></iframe><form action="https://script.google.com/macros/s/AKfycbwbnH-vIXONa8ZV0dh6Un7zvQLs8-xrv_EBlzrpppgFGLu9DE_ClcBmquZ2lmeGBTF0/exec" id="formGoogleSheets" method="POST" style="display:none;" target="iframeOculto"><input id="gs_numero" name="numero" type="hidden"/><input id="gs_fecha" name="fecha" type="hidden"/><input id="gs_asunto" name="asunto" type="hidden"/><input id="gs_solicitante" name="solicitante" type="hidden"/><input id="gs_estado" name="estado" type="hidden"/><input id="gs_anotaciones" name="anotaciones" type="hidden"/></form></body>
+  <!-- Formulario oculto para enviar a Google Sheets -->
+  <iframe id="iframeOculto" name="iframeOculto" style="display:none;"></iframe>
+  <form id="formGoogleSheets" action="https://script.google.com/macros/s/AKfycbwbnH-vIXONa8ZV0dh6Un7zvQLs8-xrv_EBlzrpppgFGLu9DE_ClcBmquZ2lmeGBTF0/exec" method="POST" target="iframeOculto" style="display:none;">
+    <input name="numero" id="gs_numero" type="hidden">
+    <input name="fecha" id="gs_fecha" type="hidden">
+    <input name="asunto" id="gs_asunto" type="hidden">
+    <input name="solicitante" id="gs_solicitante" type="hidden">
+    <input name="estado" id="gs_estado" type="hidden">
+    <input name="anotaciones" id="gs_anotaciones" type="hidden">
+  </form>
+</body>
 </html>
