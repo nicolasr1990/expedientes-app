@@ -626,11 +626,7 @@
             
             // Configurar fecha actual por defecto
             const hoy = new Date();
-            const anio = hoy.getFullYear();
-            const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-            const dia = String(hoy.getDate()).padStart(2, '0');
-            const fechaLocal = `${anio}-${mes}-${dia}`;
-            document.getElementById('fecha').value = fechaLocal;
+            document.getElementById('fecha').valueAsDate = hoy;
             
             // Event listeners
             document.getElementById('expedienteForm').addEventListener('submit', guardarExpediente);
